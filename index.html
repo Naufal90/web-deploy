@@ -1,16 +1,45 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generasi Struktur Minecraft</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Minecraft Structure Generator</title>
 </head>
 <body>
-    <h1>Upload Gambar untuk Membuat Struktur Minecraft</h1>
-    <form action="/generate" method="POST" enctype="multipart/form-data">
-        <input type="file" name="image" accept="image/*" required>
-        <button type="submit">Generate JSON</button>
+    <h1>Upload Gambar untuk Menghasilkan Struktur Minecraft</h1>
+    <form id="uploadForm" action="https://<your-vercel-url>/generate" method="POST" enctype="multipart/form-data">
+        <label for="image">Pilih Gambar:</label>
+        <input type="file" name="image" id="image" required>
+        <button type="submit">Kirim Gambar</button>
     </form>
+
+    <div id="result"></div>
+
+    <script>
+        // Menangani respon setelah upload
+        document.getElementById('uploadForm').onsubmit = function(e) {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('image', document.getElementById('image').files[0]);
+
+            fetch('https://<your-vercel-url>/generate', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'building.json';
+                document.getElementById('result').appendChild(link);
+                link.click();
+                document.getElementById('result').innerHTML = "File berhasil diunduh!";
+            })
+            .catch(error => {
+                document.getElementById('result').innerHTML = "Terjadi kesalahan saat mengunduh file.";
+            });
+        };
+    </script>
 </body>
 </html>
