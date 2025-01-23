@@ -4,14 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft Structure Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .upload-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .upload-form label {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            display: block;
+            color: #555;
+        }
+
+        .upload-form input[type="file"] {
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 1em;
+        }
+
+        .upload-form button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .upload-form button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        #result a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        #result a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h1>Upload Gambar untuk Menghasilkan Struktur Minecraft</h1>
-    <form id="uploadForm" action="https://<your-vercel-url>/generate" method="POST" enctype="multipart/form-data">
-        <label for="image">Pilih Gambar:</label>
-        <input type="file" name="image" id="image" required>
-        <button type="submit">Kirim Gambar</button>
-    </form>
+    <h1>Minecraft Structure Generator</h1>
+    
+    <div class="upload-form">
+        <form id="uploadForm" action="https://<your-vercel-url>/generate" method="POST" enctype="multipart/form-data">
+            <label for="image">Pilih Gambar:</label>
+            <input type="file" name="image" id="image" required>
+            <button type="submit">Kirim Gambar</button>
+        </form>
+    </div>
 
     <div id="result"></div>
 
