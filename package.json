@@ -2,15 +2,17 @@
   "name": "minecraft-structure-generator",
   "version": "1.0.0",
   "description": "Program untuk menghasilkan struktur Minecraft dari gambar ke format JSON.",
-  "main": "generate-structure.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node generate-structure.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "chalk": "^5.3.0",
+    "express": "^4.18.2",
     "jimp": "^0.22.10",
     "jsonfile": "^6.1.0",
-    "readline-sync": "^1.4.10"
+    "multer": "^1.4.4",
+    "path": "^0.12.7"
   },
   "author": "Developer Kelas Dunia",
   "license": "MIT"
