@@ -100,7 +100,7 @@
     <h1>Minecraft Structure Generator</h1>
     
     <div class="upload-form">
-        <form id="uploadForm" action="https://<your-vercel-url>/generate" method="POST" enctype="multipart/form-data">
+        <form id="uploadForm" action="https://utopia.pylex.xyz:9253/generate" method="POST" enctype="multipart/form-data">
             <label for="image">Pilih Gambar:</label>
             <input type="file" name="image" id="image" required>
             <button type="submit">Kirim Gambar</button>
@@ -121,7 +121,7 @@
             const formData = new FormData();
             formData.append('image', document.getElementById('image').files[0]);
 
-            fetch('https://<your-vercel-url>/generate', {
+            fetch('https://utopia.pylex.xyz:9253/generate', {
                 method: 'POST',
                 body: formData
             })
@@ -135,6 +135,7 @@
                 document.getElementById('result').innerHTML = "File berhasil diunduh!";
             })
             .catch(error => {
+                console.error('Error:', error);
                 document.getElementById('result').innerHTML = "Terjadi kesalahan saat mengunduh file.";
             });
         };
