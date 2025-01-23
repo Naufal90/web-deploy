@@ -1,20 +1,25 @@
+const express = require('express');
+const multer = require('multer');
 const Jimp = require('jimp');
 const jsonfile = require('jsonfile');
-const readlineSync = require('readline-sync');
+const path = require('path');
 const chalk = require('chalk');
+const fs = require('fs');
+
+// Konfigurasi penyimpanan file sementara untuk upload gambar
+const upload = multer({ dest: 'uploads/' });
 
 // Peta warna ke jenis blok Minecraft
 const COLOR_TO_BLOCK = {
-    '#000000': 'black_concrete', // Hitam
-    '#ffffff': 'white_concrete', // Putih
-    '#ff0000': 'red_concrete',   // Merah
-    '#00ff00': 'green_concrete', // Hijau
-    '#0000ff': 'blue_concrete',  // Biru
-    '#ffff00': 'yellow_concrete', // Kuning
-    '#ff00ff': 'magenta_concrete', // Magenta
-    '#00ffff': 'cyan_concrete',   // Cyan
-    '#808080': 'stone',          // Abu-abu
-    // Tambahkan lebih banyak warna sesuai kebutuhan
+    '#000000': 'black_concrete',
+    '#ffffff': 'white_concrete',
+    '#ff0000': 'red_concrete',
+    '#00ff00': 'green_concrete',
+    '#0000ff': 'blue_concrete',
+    '#ffff00': 'yellow_concrete',
+    '#ff00ff': 'magenta_concrete',
+    '#00ffff': 'cyan_concrete',
+    '#808080': 'stone',
 };
 
 // Fungsi untuk mendapatkan warna terdekat
@@ -45,14 +50,13 @@ function colorDifference(color1, color2) {
     );
 }
 
-// Fungsi utama untuk mengonversi gambar ke struktur JSON
+// Fungsi untuk mengonversi gambar ke struktur JSON
 async function generateStructureFromImage(imagePath, outputPath) {
     try {
         const image = await Jimp.read(imagePath);
         const blocks = [];
         const origin = { x: 0, y: 0, z: 0 };
 
-        // Membaca piksel gambar
         image.scan(0, 0, image.bitmap.width, image.bitmap.height, (x, y, idx) => {
             const r = image.bitmap.data[idx];
             const g = image.bitmap.data[idx + 1];
@@ -66,7 +70,6 @@ async function generateStructureFromImage(imagePath, outputPath) {
             }
         });
 
-        // Menyimpan ke file JSON
         const structure = { origin, blocks };
         jsonfile.writeFileSync(outputPath, structure, { spaces: 2 });
         console.log(chalk.green(`✅ Struktur berhasil disimpan ke ${outputPath}`));
@@ -75,8 +78,41 @@ async function generateStructureFromImage(imagePath, outputPath) {
     }
 }
 
-// Interaksi dengan pengguna
-const imagePath = readlineSync.question('Masukkan path gambar (contoh: ./image.png): ');
-const outputPath = readlineSync.question('Masukkan path output JSON (contoh: ./building.json): ');
+// Inisialisasi Express
+const app = express();
+const port = process.env.PORT || 3000;
 
-generateStructureFromImage(imagePath, outputPath);
+// Middleware untuk menerima data form
+app.use(express.static('public')); // Untuk file statis seperti HTML
+app.use(express.urlencoded({ extended: true }));
+
+// Menampilkan form upload gambar
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Endpoint untuk meng-handle upload gambar dan menghasilkan JSON
+app.post('/generate', upload.single('image'), async (req, res) => {
+    const imagePath = req.file.path;
+    const outputPath = `output/${req.file.filename}.json`;
+    
+    // Pastikan folder output ada
+    if (!fs.existsSync('output')) {
+        fs.mkdirSync('output');
+    }
+
+    await generateStructureFromImage(imagePath, outputPath);
+
+    res.download(outputPath, `${req.file.filename}.json`, (err) => {
+        if (err) {
+            console.error('Error saat mengunduh file:', err);
+        }
+        fs.unlinkSync(imagePath); // Hapus file gambar setelah diproses
+        fs.unlinkSync(outputPath); // Hapus file JSON setelah diunduh
+    });
+});
+
+// Mulai server
+app.listen(port, () => {
+    console.log(`Server berjalan di http://localhost:${port}`);
+});
