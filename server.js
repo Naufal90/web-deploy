@@ -83,12 +83,12 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware untuk menerima data form
-app.use(express.static('public')); // Untuk file statis seperti HTML
+app.use(express.static(__dirname)); // Untuk file statis seperti HTML
 app.use(express.urlencoded({ extended: true }));
 
 // Menampilkan form upload gambar
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Endpoint untuk meng-handle upload gambar dan menghasilkan JSON
